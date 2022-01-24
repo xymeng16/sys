@@ -219,6 +219,7 @@ var (
 	procFindResourceW                                        = modkernel32.NewProc("FindResourceW")
 	procFindVolumeClose                                      = modkernel32.NewProc("FindVolumeClose")
 	procFindVolumeMountPointClose                            = modkernel32.NewProc("FindVolumeMountPointClose")
+	procFlushConsoleInputBuffer                              = modkernel32.NewProc("FlushConsoleInputBuffer")
 	procFlushFileBuffers                                     = modkernel32.NewProc("FlushFileBuffers")
 	procFlushViewOfFile                                      = modkernel32.NewProc("FlushViewOfFile")
 	procFormatMessageW                                       = modkernel32.NewProc("FormatMessageW")
@@ -1904,6 +1905,14 @@ func FindVolumeClose(findVolume Handle) (err error) {
 
 func FindVolumeMountPointClose(findVolumeMountPoint Handle) (err error) {
 	r1, _, e1 := syscall.Syscall(procFindVolumeMountPointClose.Addr(), 1, uintptr(findVolumeMountPoint), 0, 0)
+	if r1 == 0 {
+		err = errnoErr(e1)
+	}
+	return
+}
+
+func FlushConsoleInputBuffer(handle Handle) (err error) {
+	r1, _, e1 := syscall.Syscall(procFlushConsoleInputBuffer.Addr(), 1, uintptr(handle), 0, 0)
 	if r1 == 0 {
 		err = errnoErr(e1)
 	}
